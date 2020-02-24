@@ -18,6 +18,7 @@ import com.laptrinhjavaweb.dto.BuildingDTO;
 import com.laptrinhjavaweb.service.IBuildingService;
 import com.laptrinhjavaweb.service.impl.BuildingService;
 import com.laptrinhjavaweb.utils.FormUtil;
+import com.laptrinhjavaweb.utils.HttpUtil;
 
 /**
  * Servlet implementation class BuildingAPI
@@ -52,7 +53,10 @@ public class BuildingAPI extends HttpServlet {
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
+		ObjectMapper mapper = new ObjectMapper();
+		BuildingDTO buildingDTO = HttpUtil.of(request.getReader()).toModel(BuildingDTO.class);
+		buildingService.insert(buildingDTO);
+		mapper.writeValue(response.getOutputStream(), buildingDTO);
 	}
 	
 	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

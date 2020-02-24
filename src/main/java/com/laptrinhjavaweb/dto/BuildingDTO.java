@@ -25,6 +25,7 @@ public class BuildingDTO extends BaseDTO {
 	private String timeDecorator;
 	private String managerName;
 	private String managerPhone;
+	private String[] buildingTypes = new String[] {};
 
 	public String getName() {
 		return name;
@@ -216,5 +217,13 @@ public class BuildingDTO extends BaseDTO {
 
 	public void setManagerPhone(String managerPhone) {
 		this.managerPhone = managerPhone;
+	}
+
+	public String[] getBuildingTypes() {
+		return buildingTypes;
+	}
+
+	public void setBuildingTypes(String[] buildingTypes) {
+		this.buildingTypes = buildingTypes;
 	}
 }
