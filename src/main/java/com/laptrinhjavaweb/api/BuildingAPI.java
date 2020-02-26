@@ -13,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.laptrinhjavaweb.api.input.BuildingInput;
+import com.laptrinhjavaweb.api.output.BuildingTypeOutput;
 import com.laptrinhjavaweb.builder.BuildingSearchBuilder;
 import com.laptrinhjavaweb.dto.BuildingDTO;
 import com.laptrinhjavaweb.service.IBuildingService;
@@ -30,26 +31,35 @@ public class BuildingAPI extends HttpServlet {
        
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
-		//convert params in request to model input
-		BuildingInput buildingInput = FormUtil.toModel(BuildingInput.class, request);
-		//convert model input to builder
-		BuildingSearchBuilder builder = new BuildingSearchBuilder.Builder()
-				.setName(buildingInput.getName())
-				.setDistrict(buildingInput.getDistrict())
-				.setFloorArea(StringUtils.isNotBlank(buildingInput.getFloorArea()) ? Integer.parseInt(buildingInput.getFloorArea()) : null)
-				.setNumberOfBasement(StringUtils.isNotBlank(buildingInput.getNumberOfBasement()) ? Integer.parseInt(buildingInput.getNumberOfBasement()) : null)
-				.setRentAreaFrom(buildingInput.getRentAreaFrom())
-				.setRentAreaTo(buildingInput.getRentAreaTo())
-				.setRentCostFrom(buildingInput.getRentCostFrom())
-				.setRentCostTo(buildingInput.getRentCostTo())
-				.setStaffId(buildingInput.getStaffId())
-				.setTypes(buildingInput.getTypes())
-				.build();
-		
-		//get data from database and save in dto
-		List<BuildingDTO> result = buildingService.findAll(builder);
-		//convert dto to json to send to client through response
-		mapper.writeValue(response.getOutputStream(), result);
+		//get request action to know what info client want to get
+		String action = request.getParameter("action");
+		if(action != null && action.toLowerCase().equals("search_building")) {
+			//convert params in request to model input
+			BuildingInput buildingInput = FormUtil.toModel(BuildingInput.class, request);
+			//convert model input to builder
+			BuildingSearchBuilder builder = new BuildingSearchBuilder.Builder()
+					.setName(buildingInput.getName())
+					.setDistrict(buildingInput.getDistrict())
+					.setFloorArea(StringUtils.isNotBlank(buildingInput.getFloorArea()) ? Integer.parseInt(buildingInput.getFloorArea()) : null)
+					.setNumberOfBasement(StringUtils.isNotBlank(buildingInput.getNumberOfBasement()) ? Integer.parseInt(buildingInput.getNumberOfBasement()) : null)
+					.setRentAreaFrom(buildingInput.getRentAreaFrom())
+					.setRentAreaTo(buildingInput.getRentAreaTo())
+					.setRentCostFrom(buildingInput.getRentCostFrom())
+					.setRentCostTo(buildingInput.getRentCostTo())
+					.setStaffId(buildingInput.getStaffId())
+					.setTypes(buildingInput.getTypes())
+					.build();
+			
+			//get data from database and save in dto
+			List<BuildingDTO> result = buildingService.findAll(builder);
+			//convert dto to json to send to client through response
+			mapper.writeValue(response.getOutputStream(), result);
+		}
+		else if(action != null && action.toLowerCase().equals("get_building_type")) {
+			List<BuildingTypeOutput> result = buildingService.getBuildingType();
+			//Map<String, String> result = buildingService.getMapBuildingType();
+			mapper.writeValue(response.getOutputStream(), result);
+		}
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

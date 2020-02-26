@@ -1,15 +1,18 @@
 package com.laptrinhjavaweb.service.impl;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.laptrinhjavaweb.api.output.BuildingTypeOutput;
 import com.laptrinhjavaweb.builder.BuildingSearchBuilder;
 import com.laptrinhjavaweb.converter.BuildingConverter;
 import com.laptrinhjavaweb.dto.BuildingDTO;
 import com.laptrinhjavaweb.entity.BuildingEntity;
+import com.laptrinhjavaweb.enums.BuildingTypeEnum;
 import com.laptrinhjavaweb.repository.IBuildingRepository;
 import com.laptrinhjavaweb.repository.impl.BuildingRepository;
 import com.laptrinhjavaweb.service.IBuildingService;
@@ -47,5 +50,28 @@ public class BuildingService implements IBuildingService {
 	public void insert(BuildingDTO dto) {
 		BuildingEntity entity = buildingConverter.convertDtoToEntity(dto);
 		buildingRepository.insert(entity);
+	}
+
+
+	@Override
+	public List<BuildingTypeOutput> getBuildingType() {
+		List<BuildingTypeOutput> result = new ArrayList<>();
+		for(BuildingTypeEnum item : BuildingTypeEnum.values()){
+			BuildingTypeOutput buildingTypeOutput = new BuildingTypeOutput();
+			buildingTypeOutput.setCode(item.toString());
+			buildingTypeOutput.setName(item.getValue());
+			result.add(buildingTypeOutput);
+		}
+		return result;
+	}
+
+
+	@Override
+	public Map<String, String> getMapBuildingType() {
+		Map<String, String> result = new HashMap<>();
+		for(BuildingTypeEnum item : BuildingTypeEnum.values()){
+			result.put(item.toString(), item.getValue());
+		}
+		return result;
 	}
 }
